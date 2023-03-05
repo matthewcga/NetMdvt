@@ -18,18 +18,29 @@ public partial class MainPage : ContentPage
 
     private async void DownloadExampleJson()
     {
-        int i = 0, fakeDelay = 3000;
-        var downloadingText = new[] { ".", "..", "..." };
+        JsonLabel.Text = string.Empty;
+        IsDownloading.IsRunning = true;
+
+        var fakeDelay = 3000;
         var uri = "https://api.open-meteo.com/v1/forecast?latitude=50.06&longitude=19.94&hourly=temperature_2m";
-        var downloadJsonTask = JsonDownloader.GetJsonAsync(uri, fakeDelay);
+        var downloadJsonTask = await JsonDownloader.GetJsonAsync(uri, fakeDelay);
 
-        while (!downloadJsonTask.IsCompleted)
-        {
-            await Task.WhenAny(downloadJsonTask, Task.Delay(100));
-            JsonLabel.Text = downloadingText[++i % downloadingText.Length];
-        }
+        JsonLabel.Text = downloadJsonTask.RootElement.GetRawText();
+        IsDownloading.IsRunning = false;
 
-        JsonLabel.Text = downloadJsonTask.Result.RootElement.GetRawText();
+
+        //int i = 0, fakeDelay = 3000;
+        //var downloadingText = new[] { ".", "..", "..." };
+        //var uri = "https://api.open-meteo.com/v1/forecast?latitude=50.06&longitude=19.94&hourly=temperature_2m";
+        //var downloadJsonTask = JsonDownloader.GetJsonAsync(uri, fakeDelay);
+
+        //while (!downloadJsonTask.IsCompleted)
+        //{
+        //    await Task.WhenAny(downloadJsonTask, Task.Delay(100));
+        //    JsonLabel.Text = downloadingText[++i % downloadingText.Length];
+        //}
+
+        //JsonLabel.Text = downloadJsonTask.Result.RootElement.GetRawText();
     }
 }
 
